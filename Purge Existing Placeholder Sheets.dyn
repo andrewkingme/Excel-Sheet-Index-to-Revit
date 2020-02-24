@@ -1,0 +1,224 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Purge Existing Placeholder Sheets",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Python Node for Dynamo\n# Purge Existing Placeholder Sheets\n# Coded by Andrew King\n# https://andrewkingme.com\n\nimport clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\n# Import RevitAPI\nclr.AddReference('RevitAPI')\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\n# Import DocumentManager and TransactionManager\nclr.AddReference('RevitServices')\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\n# Assign input to the IN variables.\nsheets = UnwrapElement(IN[0])\n\ndeleted = []\n\nTransactionManager.Instance.EnsureInTransaction(DocumentManager.Instance.CurrentDBDocument)\n\nfor s in sheets:\n\tif s.IsPlaceholder:\n\t\tdeleted.append('Deleted Placeholder ' + s.SheetNumber.ToString())\n\t\tDocumentManager.Instance.CurrentDBDocument.Delete(s.Id)\n\nTransactionManager.Instance.TransactionTaskDone()\n\t\t\nOUT = deleted",
+      "VariableInputPorts": true,
+      "Id": "3c4a287ab4bb4ae583a366ea6ae3b8d4",
+      "Inputs": [
+        {
+          "Id": "9c4b18f14eae4ef6a48d4d321a91b160",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6e0482f6aa6240cfa9ac563547ed1ec6",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "1ef3cc2333ed41b7b7880f4a9b439ccf",
+      "Inputs": [
+        {
+          "Id": "bbe68ea58f7349aeb9663286c064ec60",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "cd82a04ff26949a39b4fa3f05c401373",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.ElementsOfCategory, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "Id": "71f92fa7600b441f95667906ac4db0b1",
+      "Inputs": [
+        {
+          "Id": "38a12286618c4898914967019da5f43b",
+          "Name": "Category",
+          "Description": "The Category",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e36a8726fb2f4e08b1ff369e14da9fb1",
+          "Name": "Elements",
+          "Description": "An element type.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Get all elements of the specified category from the model."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 437,
+      "NodeType": "ExtensionNode",
+      "Id": "7d553a51098c4ca6b44ecd64863da981",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a0ce884277da45c2818ed8d7b178e2cf",
+          "Name": "Category",
+          "Description": "The selected Category.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All built-in categories."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "6e0482f6aa6240cfa9ac563547ed1ec6",
+      "End": "bbe68ea58f7349aeb9663286c064ec60",
+      "Id": "e54a4d91a9e64bc0935cd69148ce2767"
+    },
+    {
+      "Start": "e36a8726fb2f4e08b1ff369e14da9fb1",
+      "End": "9c4b18f14eae4ef6a48d4d321a91b160",
+      "Id": "7674db8cd47148348b2a14fdbbd030c2"
+    },
+    {
+      "Start": "a0ce884277da45c2818ed8d7b178e2cf",
+      "End": "38a12286618c4898914967019da5f43b",
+      "Id": "b6dcf69105ec45e28521c2ccb902d39d"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.3.8810",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "3c4a287ab4bb4ae583a366ea6ae3b8d4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1274.34533845069,
+        "Y": -109.298828592438
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "1ef3cc2333ed41b7b7880f4a9b439ccf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1496.34533845069,
+        "Y": -109.298828592438
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "All Elements of Category",
+        "Id": "71f92fa7600b441f95667906ac4db0b1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1006.34533845069,
+        "Y": -109.298828592438
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "7d553a51098c4ca6b44ecd64863da981",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 708.34533845069,
+        "Y": -109.298828592438
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "ee884a81638049a79b9949519790d4ca",
+        "Title": "Purge Existing Placeholder Sheets\r\n---\r\nVersion 0.1\r\nCoded by Andrew King\r\nhttps://andrewkingme.com\r\n\r\n2017-01-03 Version 0.1\r\nHello World",
+        "Nodes": [],
+        "Left": 709.36817569779964,
+        "Top": -311.18779863265792,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -452.53544612255689,
+    "Y": 450.05016215904652,
+    "Zoom": 0.82346593254105538
+  }
+}
